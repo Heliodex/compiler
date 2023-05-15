@@ -1,0 +1,4 @@
+[tools]
+selene = "Kampfkarren/selene@0.25.0"
+stylua = "johnnymorganz/stylua@0.17.1"
+lune = "filiptibell/lune@0.6.7"
