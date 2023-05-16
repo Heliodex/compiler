@@ -7,6 +7,7 @@ export type NodeType =
 	| "AssignmentExpression"
 	| "MemberExpression"
 	| "CallExpression"
+	| "ParenExpression"
 	-- Literals
 	| "Property"
 	| "ObjectLiteral"
@@ -70,6 +71,11 @@ export type CallExpr = Expression & {
 	caller: Expression,
 }
 
+-- export type ParenExpr = Expression & {
+-- 	kind: "ParenExpr",
+-- 	args: { Expression },
+-- }
+
 export type MemberExpr = Expression & {
 	kind: "MemberExpr",
 	object: Expression,
@@ -83,6 +89,11 @@ export type MemberExpr = Expression & {
 export type Identifier = Expression & {
 	kind: "Identifier",
 	symbol: string,
+	subStatements: { Statement },
+}
+
+export type Newline = Expression & {
+	kind: "Newline",
 }
 
 --- Represents a numeric constant in the soure code

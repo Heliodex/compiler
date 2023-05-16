@@ -23,5 +23,6 @@ end
 local parse = require "parser"
 local ast = parse:ast(file)
 
-print(ast)
-
+local compile = require "compiler"
+local code = compile(ast)
+print(code)

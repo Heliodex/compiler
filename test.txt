@@ -1,1 +1,7 @@
 print 1
+function call
+(function 2) args
+(function function2 3) args
+
+(test bruh test) bruh
+(test (bruh test)) bruh

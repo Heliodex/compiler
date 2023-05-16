@@ -79,8 +79,29 @@ return function(source: string)
 				line = line,
 				column = startColumn,
 			})
+		elseif char == "(" then
+			table.insert(tokens, {
+				value = char,
+				type = "OpenParen",
+				line = line,
+				column = column,
+			})
+		elseif char == ")" then
+			table.insert(tokens, {
+				value = char,
+				type = "CloseParen",
+				line = line,
+				column = column,
+			})
 		elseif char == "\n" then
 			newLine()
+
+			table.insert(tokens, {
+				value = char,
+				type = "Newline",
+				line = line,
+				column = column,
+			})
 			-- else
 			-- 	print(`Could not parse {char}`)
 		end

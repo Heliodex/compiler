@@ -31,7 +31,7 @@ function parser:expect(type: TokenType, err: any)
 	local token = self:next()
 
 	if not token or token.type ~= type then
-		error(err or "Unexpected token")
+		error(`{(err or "Unexpected token")}\nfound: {token.type}`)
 	end
 end
 
@@ -135,6 +135,38 @@ function parser:parseMemberExpression(): ast.Expression
 	return object
 end
 
+function parser:parseParenExpression()
+	self:next() -- Skip opening parenthesis
+
+	while self:token().type == "Newline" do
+		self:next()
+	end
+
+	local value: ast.Identifier = {
+		kind = "Identifier",
+		symbol = "",
+		subStatements = {},
+	}
+
+	while self:token().type == "Identifier" do
+		table.insert(value.subStatements, self:parseExpression())
+	end
+	while self:token().type == "Number" do
+		table.insert(value.subStatements, {
+			kind = "NumericLiteral",
+			value = tonumber(self:next().value),
+		})
+	end
+
+	while self:token().type == "OpenParen" do
+		-- not work
+		table.insert(value.subStatements, self:parseParenExpression())
+	end
+
+	self:expect("CloseParen", "Unexpected token found inside parenthesised expression, expected closing parenthesis")
+	return value
+end
+
 --[[
 function parser:parseObjectExpression() --: ast.Expression
 	-- if self:token().type != "OpenBrace"
@@ -165,18 +197,23 @@ function parser:parsePrimaryExpression(): ast.Expression
 		} :: ast.Identifier
 	elseif tokenType == "Number" then
 		return {
-			kind = "NumberLiteral",
+			kind = "NumericLiteral",
 			value = tonumber(self:next().value),
 		} :: ast.NumericLiteral
 	elseif tokenType == "OpenParen" then
-		self:next() -- Skip opening parenthesis
-		self:expect(
-			"CloseParen",
-			"Unexpected token found inside parenthesised expression, expected closing parenthesis"
-		)
-		return self:parseExpression()
+		return self:parseParenExpression()
+	elseif tokenType == "Newline" then
+		self:next()
+		return {
+			kind = "Newline",
+		} :: ast.Newline
+	elseif tokenType == "EOF" then
+		return {
+			kind = "EOF",
+		}
 	else
-		error("Unexpected token found during parsing:", self:token())
+		print "Unexpected token found during parsing:"
+		error(self:token())
 	end
 end
 
